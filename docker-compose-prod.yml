@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+    # Router
+    router:
+        image: alannovianto/nomdo-router:1.0
+        container_name: nomdo-router
+        restart: unless-stopped
+        tty: true
+        volumes:
+            - certbot-etc:/etc/letsencrypt
+            - certbot-var:/var/lib/letsencrypt
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - nomdo-network
+    
+    # Backend Service
+    backend-app:
+        image: alannovianto/nomdo-backend:1.0
+        container_name: nomdo-backend
+        restart: unless-stopped
+        tty: true
+        networks:
+            - nomdo-network
+             
+    # Web Service
+    web-app:
+        image: alannovianto/nomdo-frontend:1.0
+        container_name: nomdo-frontend
+        restart: unless-stopped
+        tty: true
+        networks: 
+            - nomdo-network
+    
+    # Database Service
+    mysqldb:
+        image: mysql:5.7.32
+        container_name: nomdo-database-mysql
+        restart: unless-stopped
+        tty: true
+        ports: 
+            - "3306:3306"
+        environment: 
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: Doplang12345
+            MYSQL_ROOT_PASSWORD: Doplang12345
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysqldb
+        volumes:
+            - nomdo-data:/var/lib/mysql
+            - ./mysql/my.cnf:/etc/mysql/my.cnf
+        networks: 
+            - nomdo-network
+
+# Docker Network
+networks:
+        nomdo-network:
+            driver: bridge
+
+# Volumes
+volumes:
+        certbot-etc:
+        certbot-var:
+        nomdo-data:
+            driver: local
+            

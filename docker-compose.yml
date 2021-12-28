@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+    # Router
+    router:
+        build:
+            context: .
+            dockerfile: ./Dockerfile/Dockerfile-RO
+        container_name: nomdo-router
+        restart: unless-stopped
+        tty: true
+        volumes:
+            - certbot-etc:/etc/letsencrypt
+            - certbot-var:/var/lib/letsencrypt
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - nomdo-network
+    
+    # Backend Service
+    backend-app:
+        build:
+            context: .
+            dockerfile: ./Dockerfile/Dockerfile-BE
+        container_name: nomdo-backend
+        restart: unless-stopped
+        tty: true
+        networks:
+            - nomdo-network
+             
+    # Web Service
+    web-app:
+        build:
+            context: .
+            dockerfile: ./Dockerfile/Dockerfile-FE
+        container_name: nomdo-frontend
+        restart: unless-stopped
+        tty: true
+        networks: 
+            - nomdo-network
+    
+    # Database Service
+    mysql:
+        image: mysql:5.7.32
+        container_name: nomdo-database
+        restart: unless-stopped
+        tty: true
+        ports: 
+            - "3306:3306"
+        environment: 
+            MYSQL_DATABASE: larave;=l
+            MYSQL_USER: nomdo
+            MYSQL_PASSWORD: nomdo123
+            MYSQL_ROOT_PASSWORD: nomdo123
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - nomdo-data:/var/lib/mysql
+            - ./mysql/my.cnf:/etc/mysql/my.cnf
+        networks: 
+            - nomdo-network
+
+# Docker Network
+networks:
+        nomdo-network:
+            driver: bridge
+
+# Volumes
+volumes:
+        certbot-etc:
+        certbot-var:
+        nomdo-data:
+            driver: local
+            
