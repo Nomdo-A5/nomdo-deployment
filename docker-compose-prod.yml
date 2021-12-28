@@ -35,7 +35,7 @@ services:
             - nomdo-network
     
     # Database Service
-    mysqldb:
+    mysql:
         image: mysql:5.7.32
         container_name: nomdo-database-mysql
         restart: unless-stopped
