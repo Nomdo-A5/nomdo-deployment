@@ -48,10 +48,10 @@ services:
             MYSQL_PASSWORD: Doplang12345
             MYSQL_ROOT_PASSWORD: Doplang12345
             SERVICE_TAGS: dev
-            SERVICE_NAME: mysqldb
+            SERVICE_NAME: mysql
         volumes:
             - nomdo-data:/var/lib/mysql
-            - ./mysql/my.cnf:/etc/mysql/my.cnf
+            # - ./mysql/my.cnf:/etc/mysql/my.cnf
         networks: 
             - nomdo-network
 
